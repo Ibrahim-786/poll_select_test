@@ -45,6 +45,23 @@ loop(void *data)
 	return NULL;
 }
 
+const char help_text[] =
+"--pollpri  Request POLLPRI event.\n"
+"--pollin   Request POLLIN event.\n"
+"--pollerr  Request POLLERR event (ignored because this\n"
+"           event is always requested).\n"
+"--single-thread  Send packets in the same thread that\n"
+"                 poll for their timestamps.\n"
+"--use-select     Use select() system call instead of\n"
+"                 poll().\n"
+"--mask-pollpri   Mask POLLPRI in wake up. This set\n"
+"                 SO_SELECT_ERR_QUEUE socket option. The\n"
+"                 idea is to allow \"instantaneous wake\n"
+"                 up\" on error queue.\n"
+"--bind-socket    Bind socket to receive packets.\n"
+"--tx-timestamp``: Enable transmit timestamping.\n"
+"\nE.g.: $ ./main --pollpri --mask-pollpri\n";
+
 int
 main(int argc, char **argv)
 {
@@ -72,10 +89,9 @@ main(int argc, char **argv)
 			break;
 
 		switch (c) {
+		default:
 		case 'h':
-			c = 0;
-			while (long_options[c].name)
-				printf("--%s\n", long_options[c++].name);
+			fputs(help_text, stdout);
 			return 0;
 		case 'p': request_mask |= POLLPRI; break;
 		case 'i': request_mask |= POLLIN;  break;

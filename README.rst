@@ -13,24 +13,8 @@ timestamps. In normal behavior, one thread poll for
 timestamps ``loop()``, and other thread send packets
 ``main()``.
 
-The behavior can be changed using the following
-command line options (in any order):
-
-- ``--pollpri``: Request ``POLLPRI`` event.
-- ``--pollin``: Request ``POLLIN`` event.
-- ``--pollerr``: Request ``POLLERR`` event (ignored because
-  this event is always requested).
-- ``--single-thread``: Send packets in the same thread that
-  poll for their timestamps.
-- ``--use-select``: Use ``select()`` system call instead of
-  ``poll()``.
-- ``--mask-pollpri``: Mask ``POLLPRI`` in wake up. This set
-  ``SO_SELECT_ERR_QUEUE`` socket option. The idea is to
-  allow "instantaneous wake up" on error queue.
-- ``--bind-socket``: Bind socket to receive packets.
-- ``--tx-timestamp``: Enable transmit timestamping.
-
-E.g.: ``$ ./main --pollpri --mask-pollpri``
+The behavior can be changed using the options described
+by the command ``$ main --help`` (in any order).
 
 
 Compiling
