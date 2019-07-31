@@ -4,29 +4,26 @@
 //
 // License: See LICENSE file at the root of this repository.
 
-/*
- * 10/11/2017 Ricardo Biehl Pasquali
- * polling for send timestamp on socket's error queue
- */
+// 2017-11-10
+//
+// polling for send timestamp on socket's error queue
 
-#include <getopt.h>  /* getopt_long() */
-#include <poll.h>    /* POLL* */
-#include <pthread.h> /* pthread_*() */
-#include <stdio.h>   /* printf() */
-#include <string.h>  /* strcmp() */
-#include <unistd.h>  /* sleep(), getopt_long() */
+#include <getopt.h>  // getopt_long()
+#include <poll.h>    // POLL*
+#include <pthread.h> // pthread_*()
+#include <stdio.h>   // printf()
+#include <string.h>  // strcmp()
+#include <unistd.h>  // sleep(), getopt_long()
 
-/* open_socket() do_send() do_poll() do_recv() */
+// open_socket() do_send() do_poll() do_recv()
 #include "common.h"
 
 static int send_in_same_thread = 0;
 static int use_select = 0;
 static short request_mask = 0;
 
-/*
- * It's a thread. It does poll/recv, or send/poll/recv (when
- * SEND_IN_SAME_THREAD is defined)
- */
+// It's a thread. It does poll/recv, or send/poll/recv (when
+// SEND_IN_SAME_THREAD is defined)
 static void*
 loop(void *data)
 {
@@ -94,7 +91,7 @@ main(int argc, char **argv)
 	if ((sfd = open_socket(flags)) == -1)
 		return 1;
 
-	/* create thread and wait for it to terminate */
+	// create thread and wait for it to terminate
 	pthread_create(&loop_thread, NULL, loop, &sfd);
 	if (!send_in_same_thread) {
 		for (;;) {

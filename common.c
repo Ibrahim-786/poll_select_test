@@ -4,22 +4,21 @@
 //
 // License: See LICENSE file at the root of this repository.
 
-/*
- * 19/11/2017 Ricardo Biehl Pasquali
- * polling for send timestamp on socket's error queue
- *
- * do_poll(), do_recv, do_send(), open_socket()
- */
+// 2017-11-19
+//
+// polling for send timestamp on socket's error queue
+//
+// do_poll(), do_recv, do_send(), open_socket()
 
-#include <arpa/inet.h> /* hton*() */
-#include <poll.h> /* poll() */
-#include <string.h> /* memset() */
-#include <sys/types.h> /* socket() recv() */
-#include <sys/select.h> /* select() */
-#include <sys/socket.h> /* socket() recv() */
-#include <unistd.h> /* close() */
+#include <arpa/inet.h>  // hton*()
+#include <poll.h>       // poll()
+#include <string.h>     // memset()
+#include <sys/types.h>  // socket(), recv()
+#include <sys/select.h> // select()
+#include <sys/socket.h> // socket(), recv()
+#include <unistd.h>     // close()
 
-#include <linux/net_tstamp.h> /* timestamp stuff */
+#include <linux/net_tstamp.h> // timestamp stuff
 
 #include "common.h"
 
@@ -47,12 +46,12 @@ do_poll(int sfd, short request_mask)
 {
 	struct pollfd pfd;
 
-	/* prepare */
+	// prepare
 	memset(&pfd, 0, sizeof(pfd));
 	pfd.fd = sfd;
 	pfd.events = request_mask;
 
-	/* poll */
+	// poll
 	return poll(&pfd, 1, -1);
 }
 
@@ -72,7 +71,7 @@ do_send(int sfd)
 	struct sockaddr_in saddr;
 	char tmp = 'a';
 
-	/* prepare */
+	// prepare
 	saddr.sin_family = AF_INET;
 	saddr.sin_port = htons(PORT);
 	saddr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
@@ -81,11 +80,10 @@ do_send(int sfd)
 	       sizeof(saddr));
 }
 
-/*
- * SO_SELECT_ERR_QUEUE: wake the socket with `POLLPRI|POLLERR` if it is in the
- * error list, which would enable software to wait on error queue packets
- * without waking up for regular data on the socket
- */
+// SO_SELECT_ERR_QUEUE: wake the socket with POLLPRI |
+// POLLERR if it is in the error list, which would enable
+// software to wait on error queue packets without waking
+// up for regular data on the socket
 static int
 set_pollpri_on_errqueue(int sfd)
 {
@@ -99,13 +97,13 @@ set_pollpri_on_errqueue(int sfd)
 	return 0;
 }
 
-/* SO_TIMESTAMPING: timestamp packets */
+// SO_TIMESTAMPING: timestamp packets
 static int
 set_ts_opt(int sfd)
 {
 	unsigned int opt;
 
-	/* set timestamp option */
+	// set timestamp option
 	opt = SOF_TIMESTAMPING_SOFTWARE | SOF_TIMESTAMPING_TX_SCHED |
 	      SOF_TIMESTAMPING_OPT_CMSG;
 	if (setsockopt(sfd, SOL_SOCKET, SO_TIMESTAMPING, (char*) &opt,
@@ -121,7 +119,7 @@ open_socket(int flags)
 	int sfd;
 	int tmp;
 
-	/* open socket in non-blocking mode */
+	// open socket in non-blocking mode
 	sfd = socket(AF_INET, SOCK_DGRAM|SOCK_NONBLOCK, 0);
 	if (sfd == -1)
 		return -1;
