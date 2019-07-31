@@ -11,7 +11,7 @@
 #include <getopt.h>  // getopt_long()
 #include <poll.h>    // POLL*
 #include <pthread.h> // pthread_*()
-#include <stdio.h>   // printf()
+#include <stdio.h>   // fputs()
 #include <string.h>  // strcmp()
 #include <unistd.h>  // sleep(), getopt_long()
 
