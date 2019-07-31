@@ -8,13 +8,26 @@ Poll for send timestamps
 What is it?
 ===========
 
-This is a test for error queue polling that uses tx
-timestamps. In normal behavior, one thread poll for
-timestamps ``loop()``, and other thread send packets
-``main()``.
+This is a test for ``poll()`` and ``select()`` created for
+analyzing the behavior of ``SO_SELECT_ERR_QUEUE`` when
+polling for transmit timestamps on a socket's error queue.
 
-The behavior can be changed using the options described
-by the command ``$ main --help`` (in any order).
+This program should be used with ``strace`` or another
+tracing tool to visualize the behavior of the system calls.
+
+  When the sender thread is enabled with ``--multi-thread``
+  option, ``-f`` option should be passed to strace.
+
+In normal behavior, the main thread send UDP packets to
+localhost and poll in the same (unbound) socket. This has
+no effect. Thus, options can be specified such as:
+
+- Binding the socket (``--bind-socket``).
+- Enabling transmit timestamps (``--tx-timestamp``).
+- Requesting read-is-possible event (``--pollin``).
+
+See all options with ``$ main --help``. The order of the
+options does not matter.
 
 
 Compiling
