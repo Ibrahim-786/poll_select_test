@@ -87,7 +87,7 @@ main(int argc, char **argv)
 		case 'i': request_mask |= POLLIN;  break;
 		case 'e': request_mask |= POLLERR; break;
 		case 's': send_in_other_thread = 1; break;
-		case 'S': use_select = 1;          break;
+		case 'S': use_select = 1;           break;
 		case 'm': flags |= POLLPRI_WAKEUP_ON_ERROR_QUEUE; break;
 		case 'b': flags |= BIND_SOCKET;                   break;
 		case 't': flags |= ENABLE_TX_TIMESTAMP;           break;
