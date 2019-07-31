@@ -1,3 +1,8 @@
+// Test for poll() and select() system calls
+//
+// Copyright (C) 2018  Ricardo Biehl Pasquali
+//
+// License: See LICENSE file at the root of this repository.
 
 #define PORT  8080
 

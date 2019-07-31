@@ -1,3 +1,9 @@
+// Test for poll() and select() system calls
+//
+// Copyright (C) 2018  Ricardo Biehl Pasquali
+//
+// License: See LICENSE file at the root of this repository.
+
 /*
  * 10/11/2017 Ricardo Biehl Pasquali
  * polling for send timestamp on socket's error queue
