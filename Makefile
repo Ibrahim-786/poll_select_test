@@ -6,3 +6,7 @@ main: common.o main.o
 
 common.o: common.c
 main.o:   main.c
+
+.PHONY: clean
+clean:
+	-$(RM) *.o
