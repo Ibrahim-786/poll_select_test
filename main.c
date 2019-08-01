@@ -39,6 +39,7 @@ sender(void *data)
 const char help_text[] =
 "--pollpri  Request POLLPRI event.\n"
 "--pollin   Request POLLIN event.\n"
+"--pollout  Request POLLOUT event.\n"
 "--pollerr  Request POLLERR event (ignored because this\n"
 "           event is always requested).\n"
 "--multi-thread   Send packets in another thread.\n"
@@ -65,6 +66,7 @@ main(int argc, char **argv)
 			{ "help",          no_argument, 0, 'h' },
 			{ "pollpri",       no_argument, 0, 'p' },
 			{ "pollin",        no_argument, 0, 'i' },
+			{ "pollout",       no_argument, 0, 'o' },
 			{ "pollerr",       no_argument, 0, 'e' },
 			{ "multi-thread",  no_argument, 0, 's' },
 			{ "use-select",    no_argument, 0, 'S' },
@@ -85,6 +87,7 @@ main(int argc, char **argv)
 			return 0;
 		case 'p': request_mask |= POLLPRI; break;
 		case 'i': request_mask |= POLLIN;  break;
+		case 'o': request_mask |= POLLOUT; break;
 		case 'e': request_mask |= POLLERR; break;
 		case 's': send_in_other_thread = 1; break;
 		case 'S': use_select = 1;           break;
