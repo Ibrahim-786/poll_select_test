@@ -2,7 +2,7 @@
 Poll for send timestamps
 ========================
 
-:Date: 17/11/2017
+:Date: 2017-11-17
 
 
 What is it?
