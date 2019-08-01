@@ -50,7 +50,7 @@ const char help_text[] =
 "                 idea is to allow \"instantaneous wake\n"
 "                 up\" on error queue.\n"
 "--bind-socket    Bind socket to receive packets.\n"
-"--tx-timestamp``: Enable transmit timestamping.\n"
+"--tx-timestamp   Enable transmit timestamping.\n"
 "\nE.g.: $ ./main --pollpri --mask-pollpri\n";
 
 int
