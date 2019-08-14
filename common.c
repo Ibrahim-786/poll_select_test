@@ -31,9 +31,9 @@ do_select(int sfd, short request_mask)
 	FD_ZERO(&wfds);
 	FD_ZERO(&efds);
 
-	if (request_mask & POLLIN)
+	if (request_mask & (POLLERR | POLLIN))
 		FD_SET(sfd, &rfds);
-	if (request_mask & POLLOUT)
+	if (request_mask & (POLLERR | POLLOUT))
 		FD_SET(sfd, &wfds);
 	if (request_mask & POLLPRI)
 		FD_SET(sfd, &efds);
