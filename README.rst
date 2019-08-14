@@ -39,91 +39,73 @@ Compiling
 Behavior
 ========
 
-Tests done on Linux 4.13.12 (glibc 2.24).
+:Date: 2019-08-01
 
+Wake up and return:
 
-With ``USE_POLLIN``
+- For waking up a task, the events triggered by kernel (wake
+  up key) must contain one or more of the events requested
+  by user.
+- For returning events to the user (after the task is woken
+  or before the task sleeps), the result events (which is
+  generally the same as the triggered events) must contain
+  one or more requested events. Only the matched events are
+  returned.
+
+Result events
+-------------
+
+The result event for an error condition is POLLERR.
+
+Triggered events
+----------------
+
+The events triggered by kernel on an error condition are:
+
+- Before commit 6e5d58fdc9bedd0255a8 ("skbuff: Fix not
+  waking applications when errors are enqueued") in Linux
+  4.16:
+
+  - POLLIN and POLLPRI via sk_data_ready()
+    (sock_def_readable()).
+
+- After commit 6e5d58fdc9bedd0255a8:
+
+  - POLLERR via sk_error_report() (sock_queue_err_skb()).
+
+Requested events
+----------------
+
+The request events for poll(): [1]
+
+- POLLERR | POLLHUP | <user_choice>
+
+The request events for select(): [2][3]
+
+- readfds:  POLLPRI | POLLERR | POLLIN  | POLLHUP
+- writefds: POLLPRI | POLLERR | POLLOUT
+- exeptfds: POLLPRI
+
+See [4] for where select() checks whether the result events
+were requested by user.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/stable/
+    linux.git/tree/fs/select.c?id=6e5d58fdc9bedd0255a8#n820
+
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/stable/
+    linux.git/tree/fs/select.c?id=6e5d58fdc9bedd0255a8#n435
+
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/stable/
+    linux.git/tree/fs/select.c?id=6e5d58fdc9bedd0255a8#n443
+
+[4] https://git.kernel.org/pub/scm/linux/kernel/git/stable/
+    linux.git/tree/fs/select.c?id=6e5d58fdc9bedd0255a8#n512
+
+SO_SELECT_ERR_QUEUE
 -------------------
 
-The thread wakes up with ``POLLERR`` after every packet
-sent, regardless of ``SEND_IN_SAME_THREAD``.
-
-
-With ``USE_POLLPRI``
---------------------
-
-The thread wakes up normally with ``POLLPRI|POLLERR``,
-regardless of ``SEND_IN_SAME_THREAD``.
-
-
-With ``POLLERR`` (default)
---------------------------
-
-When ``SEND_IN_SAME_THREAD`` the thread wakes up normally
-with ``POLLERR``. Otherwise ``loop()`` doesn't wake up when
-a packet is sent from ``main()`` thread.
-
-Note: ``POLLERR`` is always set by the kernel regardless
-of the requested events.
-
-
-Notes
-=====
-
-
-About ``SO_SELECT_ERR_QUEUE``
------------------------------
-
-| Linux kernel
-| commit: ``7d4c04fc170087119727119074e72445f2bb192b``
-
-::
-
-	net: add option to enable error queue packets waking select
-	
-	Currently, when a socket receives something on the error
-	queue it only wakes up the socket on select if it is in
-	the "read" list, that is the socket has something to read.
-	It is useful also to wake the socket if it is in the error
-	list, which would enable software to wait on error queue
-	packets without waking up for regular data on the socket.
-	The main use case is for receiving timestamped transmit
-	packets which return the timestamp to the socket via the
-	error queue. This enables an application to select on the
-	socket for the error queue only instead of for the regular
-	traffic.
-
-----------------------------------------
-
-| linuxptp mailing list
-| [Linuxptp-devel] [PATCH] sk: Modify poll to poll on ERRQUEUE
-
-::
-
-	On Fri, Oct 31, 2014 at 02:05:14PM -0500, Joe Schaack wrote:
-	
-	Previously the poll in `sk_receive` would "timeout" and when
-	it did so would check the `ERRQUEUE` for data and set
-	`POLLERR`.  This meant that if `sk_tx_timeout` was set to
-	100 each poll would wait for 100ms rather than exiting
-	immediately when `ERRQUEUE` data was available.
-	
-	Implement the `SO_SELECT_ERR_QUEUE` socket option that
-	enables `ERRQUEUE` messages to be polled for under the
-	`POLLPRI` flag, greatly increasing the number of packets per
-	second that can be sent from linuxptp.
-
-The rest of the message is a patch.
-
-
-The ``POLLIN`` issue
---------------------
-
-In normal behavior (when sending from a different thread)
-polling with ``events = POLLIN`` makes the thread wake up with
-``POLLERR``. However, when ``events = 0`` or ``events = POLLERR``
-the thread simply doesn't wake up.
-
-Note (24/09/2018):
-This was actually a BUG solved by the commit 6e5d58fdc9bedd0255a8
-("skbuff: Fix not waking applications when errors are enqueued").
+The socket option SO_SELECT_ERR_QUEUE was introduced in
+Linux 3.10 by the commit 7d4c04fc170087119727 ("net: add
+option to enable error queue packets waking select"). It
+simply adds POLLPRI to the result events (which already
+contains POLLERR) before it is checked for return.
