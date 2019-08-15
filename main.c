@@ -37,11 +37,14 @@ sender(void *data)
 }
 
 const char help_text[] =
-"--pollpri  Request POLLPRI event.\n"
-"--pollin   Request POLLIN event.\n"
-"--pollout  Request POLLOUT event.\n"
-"--pollerr  Request POLLERR event (when poll() is used\n"
-"           this event is implicitly requested).\n"
+"--pri  For poll(), request POLLPRI.\n"
+"       For select(), exeptfds (i.e. POLLPRI).\n"
+"--in   For poll(), request POLLIN.\n"
+"       For select(), readfds (i.e. POLLPRI, POLLERR, POLLIN).\n"
+"--out  For poll(), request POLLOUT.\n"
+"       For select(), writefds (i.e. POLLPRI, POLLERR, POLLOUT).\n"
+"--err  Ignored. poll() implicitly requests it.\n"
+"       select() requests it via readfds or writefds.\n"
 "--multi-thread   Send packets in another thread.\n"
 "--use-select     Use select() system call instead of\n"
 "                 poll().\n"
@@ -64,10 +67,10 @@ main(int argc, char **argv)
 		int c;
 		struct option long_options[] = {
 			{ "help",          no_argument, 0, 'h' },
-			{ "pollpri",       no_argument, 0, 'p' },
-			{ "pollin",        no_argument, 0, 'i' },
-			{ "pollout",       no_argument, 0, 'o' },
-			{ "pollerr",       no_argument, 0, 'e' },
+			{ "pri",           no_argument, 0, 'p' },
+			{ "in",            no_argument, 0, 'i' },
+			{ "out",           no_argument, 0, 'o' },
+			{ "err",           no_argument, 0, 'e' },
 			{ "multi-thread",  no_argument, 0, 's' },
 			{ "use-select",    no_argument, 0, 'S' },
 			{ "mask-pollpri",  no_argument, 0, 'm' },
@@ -88,7 +91,7 @@ main(int argc, char **argv)
 		case 'p': request_mask |= POLLPRI; break;
 		case 'i': request_mask |= POLLIN;  break;
 		case 'o': request_mask |= POLLOUT; break;
-		case 'e': request_mask |= POLLERR; break;
+		case 'e':      /* ignored */       break;
 		case 's': send_in_other_thread = 1; break;
 		case 'S': use_select = 1;           break;
 		case 'm': flags |= POLLPRI_WAKEUP_ON_ERROR_QUEUE; break;
