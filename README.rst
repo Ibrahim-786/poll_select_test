@@ -24,7 +24,7 @@ no effect. Thus, options can be specified such as:
 
 - Binding the socket (``--bind-socket``).
 - Enabling transmit timestamps (``--tx-timestamp``).
-- Requesting read-is-possible event (``--pollin``).
+- Requesting read-is-possible event (``--in``).
 
 See all options with ``$ main --help``. The order of the
 options does not matter.
